@@ -45,3 +45,32 @@ SELECT users.name, COUNT(tickets.id) as total_tickets
 FROM users
 JOIN tickets ON users.id = tickets.user_id
 GROUP BY users.name;
+
+-- Advanced Queries
+-- CASE WHEN
+SELECT COUNT(*) as total_tickets,
+       SUM(CASE WHEN status='open' THEN 1 ELSE 0 END) as open_tickets,
+       SUM(CASE WHEN status='resolved' THEN 1 ELSE 0 END) as resolved_tickets
+FROM tickets;
+
+-- Subqueries
+SELECT name FROM users
+WHERE id IN (SELECT user_id FROM tickets WHERE priority = 'high');
+
+SELECT name FROM users
+WHERE id NOT IN (SELECT user_id FROM tickets WHERE status = 'open');
+
+-- UPDATE & DELETE
+UPDATE tickets SET status = 'resolved' WHERE id = 1;
+DELETE FROM tickets WHERE id = 10;
+
+-- Full Support Dashboard
+SELECT users.name, users.city,
+       COUNT(tickets.id) as total_tickets,
+       SUM(CASE WHEN tickets.status='open' THEN 1 ELSE 0 END) as open_tickets,
+       SUM(CASE WHEN tickets.status='resolved' THEN 1 ELSE 0 END) as resolved_tickets,
+       SUM(CASE WHEN tickets.priority='high' THEN 1 ELSE 0 END) as high_priority
+FROM users
+JOIN tickets ON users.id = tickets.user_id
+GROUP BY users.name
+ORDER BY open_tickets DESC;
