@@ -74,3 +74,35 @@ FROM users
 JOIN tickets ON users.id = tickets.user_id
 GROUP BY users.name
 ORDER BY open_tickets DESC;
+
+-- JOIN Queries
+-- INNER JOIN 3 tables
+SELECT u.name, t.issue, t.priority, t.status, c.name as category, c.response_time
+FROM tickets t
+INNER JOIN users u ON t.user_id = u.id
+INNER JOIN categories c ON t.category_id = c.id;
+
+-- LEFT JOIN 3 tables
+SELECT u.name, t.issue, t.priority, c.name as category
+FROM tickets t
+LEFT JOIN users u ON t.user_id = u.id
+LEFT JOIN categories c ON t.category_id = c.id;
+
+-- Category summary with aggregations
+SELECT c.name as category,
+       COUNT(t.id) as total_tickets,
+       SUM(CASE WHEN t.status='open' THEN 1 ELSE 0 END) as open_tickets,
+       c.response_time
+FROM tickets t
+INNER JOIN categories c ON t.category_id = c.id
+GROUP BY c.name
+ORDER BY open_tickets DESC;
+
+-- Open tickets per user with category
+SELECT u.name, u.city, c.name as category, COUNT(t.id) as tickets
+FROM tickets t
+INNER JOIN users u ON t.user_id = u.id
+INNER JOIN categories c ON t.category_id = c.id
+WHERE t.status = 'open'
+GROUP BY u.name
+ORDER BY tickets DESC;
