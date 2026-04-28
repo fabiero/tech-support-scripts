@@ -106,3 +106,26 @@ INNER JOIN categories c ON t.category_id = c.id
 WHERE t.status = 'open'
 GROUP BY u.name
 ORDER BY tickets DESC;
+
+-- Window Functions
+-- ROW_NUMBER
+SELECT u.name, t.issue,
+    ROW_NUMBER() OVER (PARTITION BY u.name ORDER BY t.id) as row_num
+FROM tickets t
+JOIN users u ON t.user_id = u.id;
+
+-- RANK and DENSE_RANK
+SELECT u.name,
+    COUNT(t.id) as ticket_count,
+    RANK() OVER (ORDER BY COUNT(t.id) DESC) as rank,
+    DENSE_RANK() OVER (ORDER BY COUNT(t.id) DESC) as dense_rank
+FROM users u
+LEFT JOIN tickets t ON u.id = t.user_id
+GROUP BY u.name;
+
+-- LAG and LEAD
+SELECT u.name, t.issue, t.id,
+    LAG(t.issue) OVER (PARTITION BY u.name ORDER BY t.id) as previous_ticket,
+    LEAD(t.issue) OVER (PARTITION BY u.name ORDER BY t.id) as next_ticket
+FROM tickets t
+JOIN users u ON t.user_id = u.id;
