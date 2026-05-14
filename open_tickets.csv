@@ -1,0 +1,6 @@
+name,email,issue,priority,category
+Frida,frida@gmail.com,No internet,high,Network
+John,john@gmail.com,Email not working,high,Network
+Mary,mary@gmail.com,Software crash,high,Software
+Alice,alice@gmail.com,Slow wifi,low,Network
+John,john@gmail.com,Slow computer,medium,Network
